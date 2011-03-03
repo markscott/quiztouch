@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyActivity</string>
+    <string name="app_name">QuizTouch</string>
+    <string name="timer_display">Timer Display</string>
+    <string name="timer_button">Start/Stop</string>
 </resources>

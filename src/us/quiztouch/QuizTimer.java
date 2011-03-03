@@ -12,55 +12,73 @@ import android.widget.TextView;
  * Main timer
  */
 public class QuizTimer extends Activity {
-    private Handler mHandler = new Handler();
-    private long mStartTime = 0L;
+    private Handler handler = new Handler();
+    private long startTime = 0L;
+    int timeLimit = 30;
 
     View.OnClickListener buttonListener = new View.OnClickListener() {
         public void onClick(View v) {
+            Button button = (Button) findViewById(R.id.timer_button);
             // toggle timer on/off
-            if (mStartTime == 0L) {
-                mStartTime = SystemClock.uptimeMillis();
-                mHandler.removeCallbacks(mUpdateTimeTask);
-                mHandler.postDelayed(mUpdateTimeTask, 100);
+            if (startTime == 0L) {
+                startTime = SystemClock.uptimeMillis();
+                handler.removeCallbacks(mUpdateTimeTask);
+                handler.postDelayed(mUpdateTimeTask, 100);
+                button.setText("Stop");
             } else {
-                mHandler.removeCallbacks(mUpdateTimeTask);
-                mStartTime = 0L;
+                handler.removeCallbacks(mUpdateTimeTask);
+                startTime = 0L;
+                timeLimit = 30;
+                button.setText("Start");
             }
         }
     };
 
     View.OnClickListener mStopListener = new View.OnClickListener() {
         public void onClick(View v) {
-            mHandler.removeCallbacks(mUpdateTimeTask);
-            mStartTime = 0L;
+            handler.removeCallbacks(mUpdateTimeTask);
+            startTime = 0L;
+            Button button = (Button) findViewById(R.id.timer_button);
+            button.setText("Start");
         }
     };
 
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
-            final long start = mStartTime;
-            long millis = SystemClock.uptimeMillis() - start;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
             TextView mTimeLabel = (TextView) findViewById(R.id.timer_display);
-
-            if (seconds < 10) {
-                mTimeLabel.setText("" + minutes + ":0" + seconds);
-            } else {
-                mTimeLabel.setText("" + minutes + ":" + seconds);
-            }
-
-            mHandler.postAtTime(this, start + (((minutes * 60) + seconds + 1) * 1000));
+            long upTime = SystemClock.uptimeMillis();
+            mTimeLabel.setText(getRemainingTime(upTime));
+            handler.postAtTime(this, upTime + 200L);
         }
     };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Button button = (Button) findViewById(R.id.timer_button);
+        button.setText("Start");
+        button.setOnClickListener(buttonListener);
+    }
 
-        Button tbutton = (Button) findViewById(R.id.timer_button);
-        tbutton.setOnClickListener(buttonListener);
+    private String getRemainingTime(long currentTime) {
+        if(startTime == 0L) return formatTime(30);
+        int secondsElapsed = (int) ((currentTime - startTime) / 1000);
+        int timeRemaining = timeLimit - secondsElapsed;
+        if(timeRemaining <= 0) {
+            handler.removeCallbacks(mUpdateTimeTask);
+            startTime = 0L;
+            Button button = (Button) findViewById(R.id.timer_button);
+            button.setText("Start");
+            return formatTime(0);
+        }
+
+        return formatTime(timeLimit - secondsElapsed);
+    }
+
+    private String formatTime(int seconds) {
+        if(seconds < 10) return ("00:0" + seconds);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        return ((minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }
 }

@@ -9,11 +9,23 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
-     <Button
+    <Button
             android:id="@+id/timer_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_margin="10dip"
             android:text="@string/timer_button"/>
+    <ImageButton
+            android:id="@+id/green_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/button_green"
+            android:onClick="pushGreenButton"/>
+    <ImageButton
+            android:id="@+id/red_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/button_red"
+            android:onClick="pushRedButton"/>
 </LinearLayout>
